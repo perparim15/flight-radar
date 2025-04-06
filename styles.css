@@ -1,191 +1,315 @@
-body {
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#app {
-    display: flex;
-    height: 100vh;
-}
-
-#map {
-    flex: 3;
-    height: 100%;
-}
-
-#sidebar {
-    flex: 1;
-    padding: 15px;
+body {
     background-color: #f5f5f5;
-    overflow-y: auto;
-    max-width: 350px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    color: #333;
 }
 
-.plane-icon {
-    width: 20px;
-    height: 20px;
-    background-color: transparent;
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+}
+
+header {
+    padding: 15px 0;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 h1 {
-    margin-top: 0;
-    margin-bottom: 5px;
-    color: #2c3e50;
-    font-size: 1.5rem;
-}
-
-h3 {
-    margin-top: 0;
-    color: #34495e;
-    font-size: 1rem;
+    color: #003366;
     margin-bottom: 15px;
 }
 
-h2 {
-    color: #34495e;
-    font-size: 1.2rem;
-    margin-top: 20px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-}
-
-.airport-list {
-    margin-bottom: 20px;
-}
-
-.airport-item {
-    cursor: pointer;
-    padding: 10px;
-    margin-bottom: 5px;
-    background-color: white;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.airport-item:hover {
-    background-color: #e0e0e0;
-}
-
-.flight-list {
-    display: none;
+.airport-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
     margin-top: 10px;
 }
 
-.flight-item {
-    padding: 8px;
-    margin-bottom: 3px;
-    background-color: #f9f9f9;
-    border-left: 3px solid #3498db;
-    font-size: 0.9rem;
-}
-
-.arrival {
-    border-left-color: #2ecc71;
-}
-
-.departure {
-    border-left-color: #e74c3c;
-}
-
-#plane-details {
-    background-color: white;
-    padding: 15px;
-    margin-top: 20px;
+.airport-btn {
+    padding: 8px 16px;
+    background-color: #e0e0e0;
+    border: none;
     border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-.detail-row {
+.airport-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.airport-btn.active {
+    background-color: #003366;
+    color: white;
+}
+
+main {
     display: flex;
-    margin-bottom: 5px;
+    flex: 1;
+    gap: 20px;
+    height: calc(100vh - 150px);
+}
+
+.flight-list-container {
+    flex: 0 0 30%;
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+}
+
+.flight-list-container h2 {
+    margin-bottom: 15px;
+    color: #003366;
+}
+
+.flight-search {
+    margin-bottom: 15px;
+}
+
+#search-flight {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.flight-list {
+    overflow-y: auto;
+    flex: 1;
+}
+
+.flight-item {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.flight-item:hover {
+    background-color: #f9f9f9;
+}
+
+.flight-item.selected {
+    background-color: #e6f0ff;
+}
+
+.flight-callsign {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.flight-route {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.flight-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-arriving {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.status-departing {
+    background-color: #2196F3;
+    color: white;
+}
+
+.map-container {
+    flex: 0 0 70%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+.flight-details-panel {
+    position: absolute;
+    right: -400px;
+    top: 100px;
+    width: 380px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    max-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+}
+
+.flight-details-panel.active {
+    right: 20px;
+}
+
+.panel-header {
+    padding: 15px;
+    background-color: #003366;
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.panel-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.detail-group {
+    margin-bottom: 20px;
+}
+
+.detail-group h4 {
+    margin-bottom: 8px;
+    color: #003366;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
 
 .detail-label {
-    font-weight: bold;
-    width: 130px;
+    font-weight: 500;
+    color: #666;
 }
 
-#close-details {
-    float: right;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #7f8c8d;
-}
-
-#close-details:hover {
-    color: #34495e;
-}
-
-.toggle-flights {
-    background: none;
-    border: none;
-    color: #3498db;
-    cursor: pointer;
-    padding: 0;
-    font-size: 0.8rem;
-    margin-left: 5px;
-}
-
-.status-indicator {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
+.aircraft-icon {
+    background-color: rgba(0, 51, 102, 0.7);
     border-radius: 50%;
-    margin-right: 5px;
-}
-
-.status-live {
-    background-color: #2ecc71;
-}
-
-.status-paused {
-    background-color: #e74c3c;
-}
-
-#status-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #2c3e50;
     color: white;
-    padding: 5px 15px;
-    font-size: 0.8rem;
+    text-align: center;
+    font-weight: bold;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    transform-origin: center;
 }
 
-#toggle-live {
-    background: none;
-    border: 1px solid white;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 3px;
-    cursor: pointer;
+.aircraft-icon.selected {
+    background-color: rgba(255, 165, 0, 0.9);
+    border: 2px solid #ff6600;
+    z-index: 1000 !important;
 }
 
-#toggle-live:hover {
-    background-color: rgba(255,255,255,0.1);
+.aircraft-tooltip {
+    background-color: white;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    max-width: 200px;
 }
 
-/* GeoJSON styling */
-.inactive-country {
-    fill: rgba(0, 0, 0, 0.2);
-    stroke: #888;
-    stroke-width: 0.5;
+.tooltip-callsign {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
 }
 
-.active-country {
-    fill: rgba(52, 152, 219, 0.2);
-    stroke: #3498db;
-    stroke-width: 2;
+.tooltip-info {
+    color: #666;
+    margin-bottom: 3px;
 }
 
-.active-country:hover {
-    fill: rgba(52, 152, 219, 0.3);
+/* Loading spinner */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #003366;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    main {
+        flex-direction: column;
+    }
+    
+    .flight-list-container,
+    .map-container {
+        flex: 1;
+        width: 100%;
+    }
+    
+    .flight-list-container {
+        max-height: 300px;
+        margin-bottom: 20px;
+    }
+    
+    .flight-details-panel {
+        width: 90%;
+        right: -100%;
+    }
+    
+    .flight-details-panel.active {
+        right: 5%;
+    }
 }
