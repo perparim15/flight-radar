@@ -3,72 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Albania, Kosovo & North Macedonia Flight Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <title>Kosovo & Albania Flight Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" />
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <div id="map"></div>
-        <div id="sidebar">
-            <h1>Flight Tracker</h1>
-            <h3>Albania, Kosovo & North Macedonia</h3>
-            
-            <h2>Airports</h2>
-            <div class="airport-list" id="airport-list">
-                <!-- Airport items will be added here -->
+    <div class="container">
+        <header>
+            <h1>Kosovo & Albania Flight Tracker</h1>
+            <div class="airport-selector">
+                <button class="airport-btn active" data-airport="all">All Flights</button>
+                <button class="airport-btn" data-airport="pristina">Pristina Airport</button>
+                <button class="airport-btn" data-airport="tirana">Tirana Airport</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="flight-list-container">
+                <h2>Flight Information</h2>
+                <div class="flight-search">
+                    <input type="text" id="search-flight" placeholder="Search by flight number...">
+                </div>
+                <div class="flight-list" id="flight-list">
+                    <!-- Flight items will be inserted here dynamically -->
+                </div>
             </div>
             
-            <div id="plane-details">
-                <button id="close-details">✕</button>
-                <h2>Flight Details</h2>
-                <div class="detail-row">
-                    <span class="detail-label">Flight Number:</span>
-                    <span id="detail-flight"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Aircraft:</span>
-                    <span id="detail-aircraft"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Origin:</span>
-                    <span id="detail-origin"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Destination:</span>
-                    <span id="detail-destination"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Altitude:</span>
-                    <span id="detail-altitude"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Speed:</span>
-                    <span id="detail-speed"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Status:</span>
-                    <span id="detail-status"></span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">ETA:</span>
-                    <span id="detail-eta"></span>
-                </div>
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+        </main>
+        
+        <div class="flight-details-panel" id="flight-details-panel">
+            <div class="panel-header">
+                <h3>Flight Details</h3>
+                <button class="close-btn" id="close-details">&times;</button>
+            </div>
+            <div class="panel-content" id="flight-details-content">
+                <!-- Flight details will be inserted here dynamically -->
             </div>
         </div>
-    </div>
-    
-    <div id="status-bar">
-        <div>
-            <span class="status-indicator status-live" id="status-dot"></span>
-            <span id="status-text">Live: Updating every 2 seconds</span>
-        </div>
-        <button id="toggle-live">Pause</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="config.js"></script>
-    <script src="script.js"></script>
+    <script src="aircraft-types.js"></script>
+    <script src="map.js"></script>
+    <script src="flight-data.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
