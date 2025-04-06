@@ -11,15 +11,15 @@ let countryLayers = {
 // Initialize map
 function initMap() {
     // Create map centered on the region
-        map = L.map('map').setView([42.0, 20.0], 8);
+    const flightMap = L.map('map').setView([42.0, 20.0], 8);
     
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }).addTo(flightMap);
     
     // Set map bounds to Europe
-    map.setMaxBounds([
+    flightMap.setMaxBounds([
         [MAP_BOUNDS.south, MAP_BOUNDS.west], // Southwest corner
         [MAP_BOUNDS.north, MAP_BOUNDS.east]  // Northeast corner
     ]);
@@ -48,7 +48,7 @@ function loadCountryBoundaries() {
             L.geoJSON(data, {
                 style: styleCountry,
                 onEachFeature: onEachCountry
-            }).addTo(map);
+            }).addTo(flightMap);
             
             // After adding countries, add airport markers
             addAirportMarkers();
@@ -113,7 +113,7 @@ function addAirportMarkers() {
                 iconSize: [24, 24],
                 iconAnchor: [12, 12]
             })
-        }).addTo(map);
+        }).addTo(flightMap);
         
         marker.bindPopup(`<b>${airport.name}</b><br>${airport.city}, ${airport.country}<br>IATA: ${airport.iata} / ICAO: ${airport.icao}`);
         
@@ -354,7 +354,7 @@ function updatePlanePositions() {
             planeMarkers[flight.id].setIcon(icon);
         } else {
             const icon = createAirplaneIcon(flight.heading);
-            const marker = L.marker(flight.position, { icon: icon }).addTo(map);
+            const marker = L.marker(flight.position, { icon: icon }).addTo(flightMap);
             
             // Add click handler
             marker.on('click', function() {
@@ -382,7 +382,7 @@ function showPlaneDetails(flight) {
     document.getElementById('detail-eta').textContent = flight.eta;
     
     // Center map on plane
-    map.setView(flight.position, 10);
+    flightMap.setView(flight.position, 10);
 }
 
 // Set up event listeners
@@ -444,7 +444,7 @@ function init() {
             
             // Clear existing plane markers
             for (const id in planeMarkers) {
-                map.removeLayer(planeMarkers[id]);
+                flightMap.removeLayer(planeMarkers[id]);
             }
             planeMarkers = {};
             
