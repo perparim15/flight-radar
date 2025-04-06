@@ -1,9 +1,13 @@
+import { TARGET_COUNTRIES, MAP_CENTER, DEFAULT_ZOOM } from './config.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Script.js working");
-    const map = L.map('map').setView([42.0, 20.0], 8);
+    const map = L.map('map').setView(MAP_CENTER, DEFAULT_ZOOM);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    let flights = []; // Sigurohu që është deklaruar vetëm një herë
 });
 
 // Initialize variables
