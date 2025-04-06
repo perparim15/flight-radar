@@ -3,52 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shqiperi & Kosova & Maqedoni e Veriut</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <title>Albania, Kosovo & North Macedonia Flight Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
-    <link rel="stylesheet" href= "styles.css">
-    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="app">
         <div id="map"></div>
         <div id="sidebar">
-            <h1>Shqiperi & Kosova Radar</h1>
+            <h1>Flight Tracker</h1>
+            <h3>Albania, Kosovo & North Macedonia</h3>
             
-            <h2>Airoportet</h2>
+            <h2>Airports</h2>
             <div class="airport-list" id="airport-list">
                 <!-- Airport items will be added here -->
             </div>
             
             <div id="plane-details">
                 <button id="close-details">✕</button>
-                <h2>Detajet e fluturimeve</h2>
+                <h2>Flight Details</h2>
                 <div class="detail-row">
-                    <span class="detail-label">Numri i Fluturimit:</span>
+                    <span class="detail-label">Flight Number:</span>
                     <span id="detail-flight"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Avioni:</span>
+                    <span class="detail-label">Aircraft:</span>
                     <span id="detail-aircraft"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Origjina</span>
+                    <span class="detail-label">Origin:</span>
                     <span id="detail-origin"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Destinacioni</span>
+                    <span class="detail-label">Destination:</span>
                     <span id="detail-destination"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Altituda:</span>
+                    <span class="detail-label">Altitude:</span>
                     <span id="detail-altitude"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Shpejtesia:</span>
+                    <span class="detail-label">Speed:</span>
                     <span id="detail-speed"></span>
                 </div>
                 <div class="detail-row">
-                    <span class="detail-label">Statusi:</span>
+                    <span class="detail-label">Status:</span>
                     <span id="detail-status"></span>
                 </div>
                 <div class="detail-row">
@@ -62,417 +61,14 @@
     <div id="status-bar">
         <div>
             <span class="status-indicator status-live" id="status-dot"></span>
-            <span id="status-text">Live: refresh qdo 2sec</span>
+            <span id="status-text">Live: Updating every 2 seconds</span>
         </div>
-        <button id="toggle-live">Pauzo</button>
+        <button id="toggle-live">Pause</button>
     </div>
 
-    <script>
-        // Initialize map centered on Albania and Kosovo
-        const map = L.map('map').setView([42.0, 20.0], 8);
-        
-        // Add OpenStreetMap tiles
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
-        // Define airport data
-        const airports = [
-            {
-                id: 'TIA',
-                name: 'Tirana International Airport',
-                city: 'Tirana',
-                country: 'Albania',
-                iata: 'TIA',
-                icao: 'LATI',
-                lat: 41.4147,
-                lng: 19.7206,
-                arrivals: [],
-                departures: []
-            },
-            {
-                id: 'PRN',
-                name: 'Pristina International Airport',
-                city: 'Pristina',
-                country: 'Kosovo',
-                iata: 'PRN',
-                icao: 'BKPR',
-                lat: 42.5728,
-                lng: 21.0358,
-                arrivals: [],
-                departures: []
-            },
-            {
-                id: 'OHD',
-                name: 'Ohrid St. Paul the Apostle Airport',
-                city: 'Ohrid',
-                country: 'North Macedonia',
-                iata: 'OHD',
-                icao: 'LWOH',
-                lat: 41.1799,
-                lng: 20.7422,
-                arrivals: [],
-                departures: []
-            }
-        ];
-        
-        // Sample flight data (would be replaced with API data)
-        let flights = [];
-        
-        // Track which planes are visible on the map
-        const planeMarkers = {};
-        
-        // Track status of live updates
-        let liveUpdates = true;
-        
-        // Add airport markers to map
-        airports.forEach(airport => {
-            const marker = L.marker([airport.lat, airport.lng]).addTo(map);
-            marker.bindPopup(`<b>${airport.name}</b><br>${airport.city}, ${airport.country}<br>IATA: ${airport.iata} / ICAO: ${airport.icao}`);
-            
-            // Add to airport list in sidebar
-            const airportDiv = document.createElement('div');
-            airportDiv.className = 'airport-item';
-            airportDiv.innerHTML = `
-                <strong>${airport.name}</strong> (${airport.iata})<br>
-                ${airport.city}, ${airport.country}
-                <button class="toggle-flights">Show Flights</button>
-                <div class="flight-list" id="flights-${airport.id}"></div>
-            `;
-            document.getElementById('airport-list').appendChild(airportDiv);
-            
-            // Add event listener for toggling flights
-            const toggleButton = airportDiv.querySelector('.toggle-flights');
-            toggleButton.addEventListener('click', function() {
-                const flightList = document.getElementById(`flights-${airport.id}`);
-                if (flightList.style.display === 'none' || !flightList.style.display) {
-                    flightList.style.display = 'block';
-                    toggleButton.textContent = 'Hide Flights';
-                    updateAirportFlights(airport.id);
-                } else {
-                    flightList.style.display = 'none';
-                    toggleButton.textContent = 'Show Flights';
-                }
-            });
-        });
-        
-        // Function to generate airplane icon with rotation
-        function createAirplaneIcon(heading) {
-            return L.divIcon({
-                html: `<svg width="20" height="20" viewBox="0 0 24 24" style="transform: rotate(${heading}deg)">
-                        <path fill="#3498db" d="M22,16v-2l-8.5-5V3.5C13.5,2.67,12.83,2,12,2s-1.5,0.67-1.5,1.5V9L2,14v2l8.5-2.5V19L8,20.5L8,22l4-1l4,1l0-1.5L13.5,19v-5.5L22,16z"/>
-                      </svg>`,
-                className: 'plane-icon',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
-            });
-        }
-        
-        // Function to generate mock flight data
-        function generateMockFlights() {
-            const airlines = ['ALB', 'KOS', 'WZZ', 'RYR', 'LFT', 'ADR', 'AHY'];
-            const aircraftTypes = ['A320', 'B738', 'A319', 'E190', 'DH8D', 'CRJ9', 'A321'];
-            const destinations = [
-                { city: 'Vienna', iata: 'VIE' },
-                { city: 'Rome', iata: 'FCO' },
-                { city: 'Istanbul', iata: 'IST' },
-                { city: 'Frankfurt', iata: 'FRA' },
-                { city: 'London', iata: 'LHR' },
-                { city: 'Munich', iata: 'MUC' },
-                { city: 'Zurich', iata: 'ZRH' },
-                { city: 'Athens', iata: 'ATH' },
-                { city: 'Budapest', iata: 'BUD' },
-                { city: 'Milan', iata: 'MXP' }
-            ];
-            
-            // Clear previous flights
-            flights = [];
-            
-            // Generate 15-25 flights
-            const flightCount = Math.floor(Math.random() * 11) + 15;
-            
-            for (let i = 0; i < flightCount; i++) {
-                const airline = airlines[Math.floor(Math.random() * airlines.length)];
-                const flightNumber = airline + Math.floor(Math.random() * 9000 + 1000);
-                const aircraft = aircraftTypes[Math.floor(Math.random() * aircraftTypes.length)];
-                
-                // Select origin/destination
-                const homeAirport = airports[Math.floor(Math.random() * airports.length)];
-                let destAirport;
-                
-                const isArrival = Math.random() > 0.5;
-                
-                if (isArrival) {
-                    const dest = destinations[Math.floor(Math.random() * destinations.length)];
-                    destAirport = {
-                        name: `${dest.city} Airport`,
-                        city: dest.city,
-                        iata: dest.iata,
-                        lat: null,
-                        lng: null
-                    };
-                } else {
-                    const destIndex = Math.floor(Math.random() * destinations.length);
-                    destAirport = {
-                        name: `${destinations[destIndex].city} Airport`,
-                        city: destinations[destIndex].city,
-                        iata: destinations[destIndex].iata,
-                        lat: null,
-                        lng: null
-                    };
-                }
-                
-                // Generate position based on origin/destination and progress
-                let position, bearing, status, eta;
-                
-                if (isArrival) {
-                    // Flight is arriving to home airport
-                    const direction = Math.random() * 360;
-                    const distance = Math.random() * 50 + 10; // 10-60 km away
-                    
-                    // Calculate position based on direction and distance
-                    const lat = homeAirport.lat + (distance / 111) * Math.cos(direction * Math.PI / 180);
-                    const lng = homeAirport.lng + (distance / (111 * Math.cos(homeAirport.lat * Math.PI / 180))) * Math.sin(direction * Math.PI / 180);
-                    
-                    position = [lat, lng];
-                    
-                    // Calculate bearing to airport (opposite of direction)
-                    bearing = (direction + 180) % 360;
-                    
-                    // Set status and ETA
-                    if (distance < 20) {
-                        status = 'Approaching';
-                        eta = `${Math.floor(distance * 3 + 5)} minutes`;
-                    } else {
-                        status = 'En Route';
-                        eta = `${Math.floor(distance * 3 + 15)} minutes`;
-                    }
-                    
-                    // Add to airport arrivals
-                    airports.find(a => a.id === homeAirport.id).arrivals.push({
-                        flight: flightNumber,
-                        from: destAirport.city,
-                        eta: eta,
-                        status: status
-                    });
-                } else {
-                    // Flight is departing from home airport
-                    const direction = Math.random() * 360;
-                    const distance = Math.random() * 30; // 0-30 km away
-                    
-                    // Calculate position based on direction and distance
-                    const lat = homeAirport.lat + (distance / 111) * Math.cos(direction * Math.PI / 180);
-                    const lng = homeAirport.lng + (distance / (111 * Math.cos(homeAirport.lat * Math.PI / 180))) * Math.sin(direction * Math.PI / 180);
-                    
-                    position = [lat, lng];
-                    
-                    // Calculate bearing from airport (same as direction)
-                    bearing = direction;
-                    
-                    // Set status and ETA
-                    if (distance < 5) {
-                        status = 'Departing';
-                        eta = `Just departed`;
-                    } else {
-                        status = 'En Route';
-                        eta = `${Math.floor(120 + Math.random() * 60)} minutes to ${destAirport.city}`;
-                    }
-                    
-                    // Add to airport departures
-                    airports.find(a => a.id === homeAirport.id).departures.push({
-                        flight: flightNumber,
-                        to: destAirport.city,
-                        departed: `${Math.floor(distance * 3)} minutes ago`,
-                        status: status
-                    });
-                }
-                
-                // Add flight to list
-                flights.push({
-                    id: i,
-                    callsign: flightNumber,
-                    airline: airline,
-                    flightNumber: flightNumber.substring(airline.length),
-                    aircraft: aircraft,
-                    origin: isArrival ? destAirport : homeAirport,
-                    destination: isArrival ? homeAirport : destAirport,
-                    position: position,
-                    altitude: Math.floor(Math.random() * 30000) + 5000,
-                    speed: Math.floor(Math.random() * 300) + 400,
-                    heading: bearing,
-                    status: status,
-                    eta: eta
-                });
-            }
-            
-            return flights;
-        }
-        
-        // Function to update airport flight lists
-        function updateAirportFlights(airportId) {
-            const airport = airports.find(a => a.id === airportId);
-            const flightListEl = document.getElementById(`flights-${airportId}`);
-            
-            if (!flightListEl) return;
-            
-            // Clear existing flight items
-            flightListEl.innerHTML = '';
-            
-            // Add arrivals
-            if (airport.arrivals.length > 0) {
-                const arrivalsHeading = document.createElement('h3');
-                arrivalsHeading.textContent = 'Arrivals';
-                flightListEl.appendChild(arrivalsHeading);
-                
-                airport.arrivals.forEach(flight => {
-                    const flightItem = document.createElement('div');
-                    flightItem.className = 'flight-item arrival';
-                    flightItem.innerHTML = `
-                        <strong>${flight.flight}</strong> from ${flight.from}<br>
-                        ETA: ${flight.eta} | ${flight.status}
-                    `;
-                    flightListEl.appendChild(flightItem);
-                });
-            }
-            
-            // Add departures
-            if (airport.departures.length > 0) {
-                const departuresHeading = document.createElement('h3');
-                departuresHeading.textContent = 'Departures';
-                flightListEl.appendChild(departuresHeading);
-                
-                airport.departures.forEach(flight => {
-                    const flightItem = document.createElement('div');
-                    flightItem.className = 'flight-item departure';
-                    flightItem.innerHTML = `
-                        <strong>${flight.flight}</strong> to ${flight.to}<br>
-                        Departed: ${flight.departed} | ${flight.status}
-                    `;
-                    flightListEl.appendChild(flightItem);
-                });
-            }
-        }
-        
-        // Function to update plane positions
-        function updatePlanePositions() {
-            // For each flight
-            flights.forEach(flight => {
-                // Update position slightly (simulate movement)
-                const direction = flight.heading * Math.PI / 180;
-                const speedFactor = flight.speed / 3600; // Convert knots to deg/s approximately
-                
-                flight.position = [
-                    flight.position[0] + Math.cos(direction) * speedFactor * 0.0002,
-                    flight.position[1] + Math.sin(direction) * speedFactor * 0.0002
-                ];
-                
-                // Update or create marker
-                if (planeMarkers[flight.id]) {
-                    planeMarkers[flight.id].setLatLng(flight.position);
-                    
-                    // Update icon rotation
-                    const icon = createAirplaneIcon(flight.heading);
-                    planeMarkers[flight.id].setIcon(icon);
-                } else {
-                    const icon = createAirplaneIcon(flight.heading);
-                    const marker = L.marker(flight.position, { icon: icon }).addTo(map);
-                    
-                    // Add click handler
-                    marker.on('click', function() {
-                        showPlaneDetails(flight);
-                    });
-                    
-                    // Store marker reference
-                    planeMarkers[flight.id] = marker;
-                }
-            });
-        }
-        
-        // Function to show plane details
-        function showPlaneDetails(flight) {
-            const detailsDiv = document.getElementById('plane-details');
-            detailsDiv.style.display = 'block';
-            
-            document.getElementById('detail-flight').textContent = flight.callsign;
-            document.getElementById('detail-aircraft').textContent = flight.aircraft;
-            document.getElementById('detail-origin').textContent = `${flight.origin.city} (${flight.origin.iata})`;
-            document.getElementById('detail-destination').textContent = `${flight.destination.city} (${flight.destination.iata})`;
-            document.getElementById('detail-altitude').textContent = `${flight.altitude} ft`;
-            document.getElementById('detail-speed').textContent = `${flight.speed} knots`;
-            document.getElementById('detail-status').textContent = flight.status;
-            document.getElementById('detail-eta').textContent = flight.eta;
-            
-            // Center map on plane
-            map.setView(flight.position, 10);
-        }
-        
-        // Handle close details button
-        document.getElementById('close-details').addEventListener('click', function() {
-            document.getElementById('plane-details').style.display = 'none';
-        });
-        
-        // Handle toggle live updates button
-        document.getElementById('toggle-live').addEventListener('click', function() {
-            liveUpdates = !liveUpdates;
-            
-            const statusDot = document.getElementById('status-dot');
-            const statusText = document.getElementById('status-text');
-            const toggleButton = document.getElementById('toggle-live');
-            
-            if (liveUpdates) {
-                statusDot.className = 'status-indicator status-live';
-                statusText.textContent = 'Live: Updating every 2 seconds';
-                toggleButton.textContent = 'Pause';
-            } else {
-                statusDot.className = 'status-indicator status-paused';
-                statusText.textContent = 'Updates paused';
-                toggleButton.textContent = 'Resume';
-            }
-        });
-        
-        // Generate initial flight data
-        generateMockFlights();
-        
-        // Update plane positions initially
-        updatePlanePositions();
-        
-        // Start the live update interval
-        setInterval(function() {
-            if (liveUpdates) {
-                updatePlanePositions();
-            }
-        }, 2000);
-        
-        // Refresh flight data every minute (simulates new data from API)
-        setInterval(function() {
-            if (liveUpdates) {
-                // Clear arrivals/departures for all airports
-                airports.forEach(airport => {
-                    airport.arrivals = [];
-                    airport.departures = [];
-                });
-                
-                // Clear existing plane markers
-                for (const id in planeMarkers) {
-                    map.removeLayer(planeMarkers[id]);
-                }
-                planeMarkers = {};
-                
-                // Generate new flight data
-                generateMockFlights();
-                
-                // Update plane positions
-                updatePlanePositions();
-                
-                // Update any visible airport flight lists
-                airports.forEach(airport => {
-                    const flightList = document.getElementById(`flights-${airport.id}`);
-                    if (flightList && flightList.style.display === 'block') {
-                        updateAirportFlights(airport.id);
-                    }
-                });
-            }
-        }, 60000);
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
