@@ -1,7 +1,7 @@
 // Configuration file for Flight Tracker
 
 // Target countries to highlight
-const TARGET_COUNTRIES = ['ALB', 'MKD', 'KOS', 'UNK']; // Albania, North Macedonia, Kosovo (may be UNK in some datasets)
+const TARGET_COUNTRIES = ['Albania', 'Kosovo', 'North Macedonia'];
 
 // Map bounds for Europe
 const MAP_BOUNDS = {
