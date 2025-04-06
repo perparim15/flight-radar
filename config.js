@@ -1,53 +1,84 @@
-// Target countries to highlight
-const TARGET_COUNTRIES = ['ALB', 'MKD', 'KOS', 'UNK'];
+// Configuration file for Flight Tracker
 
-// Map bounds for Europe
-const MAP_BOUNDS = {
-    north: 60,
-    south: 35,
-    east: 30,
-    west: -10
+const CONFIG = {
+    // Map configuration
+    map: {
+        center: [42.0, 20.5], // Center between Kosovo and Albania
+        defaultZoom: 7,
+        maxZoom: 12,
+        minZoom: 5,
+        tileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    },
+    
+    // Region boundaries
+    regions: {
+        kosovo: {
+            name: 'Kosovo',
+            bounds: {
+                north: 43.25,
+                south: 41.85,
+                east: 21.80,
+                west: 20.00
+            },
+            center: [42.55, 20.90]
+        },
+        albania: {
+            name: 'Albania',
+            bounds: {
+                north: 42.65,
+                south: 39.65,
+                east: 21.05,
+                west: 19.25
+            },
+            center: [41.15, 20.15]
+        }
+    },
+    
+    // Airport information
+    airports: {
+        pristina: {
+            name: 'Pristina International Airport',
+            code: 'PRN',
+            position: [42.5728, 21.0358],
+            bounds: {
+                radius: 50 // km radius around the airport
+            }
+        },
+        tirana: {
+            name: 'Tirana International Airport',
+            code: 'TIA',
+            position: [41.4146, 19.7206],
+            bounds: {
+                radius: 50 // km radius around the airport
+            }
+        }
+    },
+    
+    // API configuration
+    api: {
+        openSky: {
+            url: 'https://opensky-network.org/api',
+            endpoints: {
+                states: '/states/all',
+                arrivals: '/flights/arrival',
+                departures: '/flights/departure'
+            },
+            updateInterval: 15000, // 15 seconds in milliseconds
+            bounds: {
+                // Bounding box covering Kosovo and Albania with some margin
+                lamin: 39.5,  // southern border
+                lamax: 43.5,  // northern border
+                lomin: 19.0,  // western border
+                lomax: 22.0   // eastern border
+            }
+        }
+    },
+    
+    // UI configuration
+    ui: {
+        refreshInterval: 30000, // 30 seconds in milliseconds
+        planeIconSize: 20,
+        selectedPlaneIconSize: 26
+    }
 };
-
-// Map center and default zoom
-const MAP_CENTER = [41.6, 20.5];
-const DEFAULT_ZOOM = 7;
-
-// Airport data
-const AIRPORTS = [
-    { id: 'TIA', name: 'Tirana International Airport', city: 'Tirana', country: 'Albania', iata: 'TIA', icao: 'LATI', lat: 41.4147, lng: 19.7206, arrivals: [], departures: [] },
-    { id: 'PRN', name: 'Pristina International Airport', city: 'Pristina', country: 'Kosovo', iata: 'PRN', icao: 'BKPR', lat: 42.5728, lng: 21.0358, arrivals: [], departures: [] },
-    { id: 'OHD', name: 'Ohrid St. Paul the Apostle Airport', city: 'Ohrid', country: 'North Macedonia', iata: 'OHD', icao: 'LWOH', lat: 41.1799, lng: 20.7422, arrivals: [], departures: [] },
-    { id: 'SKP', name: 'Skopje International Airport', city: 'Skopje', country: 'North Macedonia', iata: 'SKP', icao: 'LWSK', lat: 41.9616, lng: 21.6214, arrivals: [], departures: [] }
-];
-
-// Sample destinations for mock data
-const DESTINATIONS = [
-    { city: 'Vienna', iata: 'VIE' },
-    { city: 'Rome', iata: 'FCO' },
-    { city: 'Istanbul', iata: 'IST' },
-    { city: 'Frankfurt', iata: 'FRA' },
-    { city: 'London', iata: 'LHR' },
-    { city: 'Munich', iata: 'MUC' },
-    { city: 'Zurich', iata: 'ZRH' },
-    { city: 'Athens', iata: 'ATH' },
-    { city: 'Budapest', iata: 'BUD' },
-    { city: 'Milan', iata: 'MXP' },
-    { city: 'Paris', iata: 'CDG' },
-    { city: 'Brussels', iata: 'BRU' },
-    { city: 'Amsterdam', iata: 'AMS' },
-    { city: 'Stockholm', iata: 'ARN' }
-];
-
-// Airlines for mock data
-const AIRLINES = ['ALB', 'WZZ', 'RYR', 'LFT', 'AHY', 'THY', 'ASL', 'AUA', 'SWR', 'AFR'];
-
-// Aircraft types for mock data
-const AIRCRAFT_TYPES = ['A320', 'B738', 'A319', 'E190', 'DH8D', 'CRJ9', 'A321', 'B77W', 'A333', 'A359'];
-
-// Update intervals
-const POSITION_UPDATE_INTERVAL = 2000;
-const FLIGHT_DATA_REFRESH_INTERVAL = 60000;
-
-// Path to GeoJSON files
-const GEOJSON_PATH = 'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson';
