@@ -11,7 +11,7 @@ let countryLayers = {
 // Initialize map
 function initMap() {
     // Create map centered on the region
-    map = L.map('map').setView(MAP_CENTER, DEFAULT_ZOOM);
+        map = L.map('map').setView([42.0, 20.0], 8);
     
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
