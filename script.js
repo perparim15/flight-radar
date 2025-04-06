@@ -1,5 +1,12 @@
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Script.js working");
+    const map = L.map('map').setView([42.0, 20.0], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+});
+
 // Initialize variables
-let map;
 let flights = [];
 let planeMarkers = {};
 let liveUpdates = true;
